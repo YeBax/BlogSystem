@@ -1,6 +1,7 @@
 from django import forms
-
 from django.forms import widgets
+from django.core.exceptions import ValidationError
+from blogs.models import UserInfo
 
 
 class UserForm(forms.Form):
@@ -16,3 +17,22 @@ class UserForm(forms.Form):
     email = forms.EmailField(max_length=32,
                              label="邮箱",
                              widget=widgets.EmailInput(attrs={"class": "form-control"}))
+
+    def clean_user(self):
+        val = self.cleaned_data.get("user")
+        user = UserInfo.objects.filter(username=val).first()
+        if not user:
+            return val
+        else:
+            raise ValidationError("该用户已经注册！")
+
+    def clean(self):
+        pwd = self.cleaned_data.get("pwd")
+        re_pwd = self.cleaned_data.get("re_pwd")
+        if pwd and re_pwd:
+            if pwd == re_pwd:
+                return self.cleaned_data
+            else:
+                raise ValidationError("两次密码不一致")
+        else:
+            return self.cleaned_data

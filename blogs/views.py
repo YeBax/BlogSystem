@@ -1,13 +1,15 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
 # Create your views here.
 
 from django.contrib import auth
 from .blog_form import UserForm
+from .models import *
 
 
 def index(request):
-    return render(request, "index.html")
+    article_list = Article.objects.all()
+    return render(request, "index.html", locals())
 
 
 def login(request):
@@ -46,6 +48,38 @@ def get_validCode_img(request):
 
 
 def register(request):
+    if request.is_ajax():
+        print(request.POST)
+        form = UserForm(request.POST)
+
+        response = {"user": None, "msg": None}
+        if form.is_valid():
+            response["user"] = form.cleaned_data.get("user")
+
+            # 生成一条用户记录
+            user = form.cleaned_data.get("user")
+            pwd = form.cleaned_data.get("pwd")
+            email = form.cleaned_data.get("email")
+            avatar_obj = request.FILES.get("avatar")
+
+            extra = {}
+            if avatar_obj:
+                extra["avatar"] = avatar_obj
+
+            UserInfo.objects.create_user(username=user, password=pwd, email=email, **extra)
+
+        else:
+            print(form.cleaned_data)
+            print(form.errors)
+            response["msg"] = form.errors
+
+        return JsonResponse(response)
+
     form = UserForm()
 
     return render(request, "register.html", locals())
+
+
+def logout(request):
+    auth.logout(request)  # request.session.flush
+    return redirect("/login")

@@ -13,6 +13,10 @@
         #avatar {
             display: none;
         }
+
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -21,13 +25,13 @@
     <div class="row">
         <div class="col-md-6 col-lg-offset-3">
             <h3>注册页面</h3>
-            <form>
+            <form id="form">
                 {% csrf_token %}
 
                 {% for filed in form %}
                     <div class="form-group">
                         <label for="id_{{ filed.name }}">{{ filed.label }}</label>
-                        {{ filed }}
+                        {{ filed }}<span class="error pull-right"></span>
                     </div>
                 {% endfor %}
                 <div class="form-group">
@@ -37,7 +41,7 @@
                     </label>
                     <input type="file" id="avatar">
                 </div>
-                <input type="button" class="btn btn-default login_btn pull-right" value="登录">
+                <input type="button" class="btn btn-default reg_btn pull-right" value="注册">
                 <span class="error"></span>
             </form>
 
@@ -60,7 +64,57 @@
         };
 
 
-    })
+    });
+
+    // 基于Ajax提交数据
+    $(".reg_btn").click(function () {
+        var formdata = new FormData();
+        // 优化 较少冗余代码量
+        var request_data = $("#form").serializeArray();
+        console.log($("#form").serializeArray());
+        $.each(request_data, function (index, data) {
+            formdata.append(data.name, data.value)
+        });
+        formdata.append("avatar", $("#avatar")[0].files[0]);
+
+
+        // formdata.append("user", $("#id_user").val());
+        // formdata.append("pwd", $("#id_pwd").val());
+        // formdata.append("re_pwd", $("#id_re_pwd").val());
+        // formdata.append("email", $("#id_email").val());
+        // formdata.append("avatar", $("#avatar")[0].files[0]);
+        // formdata.append("csrfmiddlewaretoken", $("[name=csrfmiddlewaretoken]").val());
+
+        $.ajax({
+            url: "",
+            type: "post",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            success: function (data) {
+                {#console.log(data);#}
+                if (data.user) {
+                    // 注册成功
+                    location.href = "/login/"
+                } else {
+                    // 注册失败
+                    {#console.log(data.msg);#}
+                    // 清空错误信息
+                    $("span.error").html("");
+                    $(".form-group").removeClass("has-error");
+
+                    $.each(data.msg, function (filed, error_list) {
+                        console.log(filed, error_list);
+                        if(filed == "__all__"){
+                            $("#id_re_pwd").next().html(error_list[0]).parent().addClass("has-error");
+                        }
+                        $("#id_" + filed).next().html(error_list[0]);
+                        $("#id_" + filed).parent().addClass("has-error")
+                    })
+                }
+            }
+        });
+    });
 
 </script>
 </body>
