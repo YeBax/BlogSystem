@@ -130,7 +130,7 @@ def home_site(request, username):
 
     # 方式2：
     from django.db.models.functions import TruncMonth, TruncDay
-    ret = Article.objects.filter(user=user).annotate(month=TruncMonth("create_time")).values("month").\
+    ret = Article.objects.filter(user=user).annotate(month=TruncMonth("create_time")).values_list("month").\
         annotate(c=Count("month")).values_list("month")
     print(ret)
 
