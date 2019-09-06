@@ -1,5 +1,6 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.http import JsonResponse
+from django.db.models import Count
 # Create your views here.
 
 from django.contrib import auth
@@ -83,3 +84,54 @@ def register(request):
 def logout(request):
     auth.logout(request)  # request.session.flush
     return redirect("/login")
+
+
+def home_site(request, username):
+    """
+    个人站点 视图函数
+    :param request:
+    :return:
+    """
+    print(username)
+    user = UserInfo.objects.filter(username=username).first()
+    if not user:
+        return render(request, "not_found.html")
+
+    # 查询当前站点对象
+    blog = user.blog
+
+    # 当前用户 或者 当前站点 对应的所有文章
+    # 基于对象查询
+    # article_list = user.article_set.all()
+    # 基于 __
+    article_list = Article.objects.filter(user=user)
+
+    # 查询每一个分类的名称以及对应的文章数
+    # ret = Category.objects.values("pk").annotate(c=Count("article__title")).values("title", "c")
+    # print(ret)
+
+
+    # 查询当前站点的每一个分类名称以及对应的文章数
+    # ret = Category.objects.filter(blog=blog).values("pk").annotate(c=Count("article__title")).values("title", "c")
+    # print(ret)
+
+    # 查询当前站点的每一个标签名称以及对应的文章数
+    # tag_list = Tag.objects.filter(blog=blog).values("pk").annotate(c=Count("article")).values_list("title","c")
+    # print(tag_list)
+
+    # 查询当前站点每一个年月的名称以及对应的文章数
+    # ret = Article.objects.extra(select={"is_recent": "create_time > '2017-09-05'"}).values("title", "is_recent")
+    # print(ret)
+
+    # ret = Article.objects.extra(select={"y_m_date": "date_format(create_time, '%%Y-%%m-%%d')"}).values("title", "y_m_date")
+    # 方式1：
+    # date_list = Article.objects.filter(user=user).extra(select={"y_m_date": "date_format(create_time, '%%Y-%%m')"}).values("y_m_date").annotate(c=Count("nid")).values("y_m_date","c")
+    # print(date_list)
+
+    # 方式2：
+    from django.db.models.functions import TruncMonth, TruncDay
+    ret = Article.objects.filter(user=user).annotate(month=TruncMonth("create_time")).values("month").\
+        annotate(c=Count("month")).values_list("month")
+    print(ret)
+
+    return render(request, "home_site.html", locals())

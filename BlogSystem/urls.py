@@ -31,4 +31,7 @@ urlpatterns = [
     # media配置
     re_path(r"media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 
+    # 个人站点
+    re_path(r"^(?P<username>\w+)$", views.home_site)
+
 ]
