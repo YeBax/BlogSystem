@@ -98,13 +98,13 @@
             <div class="article_list">
                 {% for article in article_list %}
                     <div class="article-item">
-                        <h5><a href="">{{ article.title }}</a></h5>
+                        <h5><a href="/{{ article.user.username }}/articles/{{ article.pk }}">{{ article.title }}</a></h5>
                         <div class="article-desc">
                         <span class="media-left">
                             <a href=""><img src="media/{{ article.user.avatar }}" alt="" width="56" height="56"></a>
                         </span>
                             <span class="media-right">
-                            {{ article.desc }}
+                            {{ article.desc|safe }}
                         </span>
                         </div>
                         <div class="small pub_info">

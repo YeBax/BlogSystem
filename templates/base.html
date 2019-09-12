@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HomeSite</title>
+
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/article_detail.css">
+    <link rel="stylesheet" href="/static/css/backend.css">
+    <link rel="stylesheet" href="/static/css/home_site.css">
+    <script src="/static/js/jquery-3.4.1.js"></script>
+{#    <style type="text/css">#}
+{#        * {#}
+{#            margin: 0;#}
+{#            padding: 0;#}
+{#        }#}
+{##}
+{#        .header {#}
+{#            width: 100%;#}
+{#            height: 60px;#}
+{#            background-color: #369;#}
+{##}
+{#        }#}
+{##}
+{#        .header .title {#}
+{#            font-size: 18px;#}
+{#            font-weight: 100;#}
+{#            line-height: 60px;#}
+{#            color: white;#}
+{#            margin-left: 15px;#}
+{#            margin-top: -10px;#}
+{#        }#}
+{##}
+{#        .backend {#}
+{#            float: right;#}
+{#            color: white;#}
+{#            text-decoration: none;#}
+{#            font-size: 14px;#}
+{#            margin-right: 10px;#}
+{#            margin-top: 10px;#}
+{#        }#}
+{##}
+{#        .pub_info {#}
+{#            margin-top: 10px;#}
+{#            color: darkgray;#}
+{##}
+{##}
+{#        }#}
+{##}
+{#    </style>#}
+</head>
+<head>
+</head>
+<body>
+<div class="header">
+    <div class="content">
+        <p class="title">
+            <a href="/{{ username }}"><span style="color:white">{{ blog.title }}</span></a>
+            <a href="" class="backend">管理</a>
+        </p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            {% load my_tags %}
+            {% get_classification_style username %}
+        </div>
+        <div class="col-md-9">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

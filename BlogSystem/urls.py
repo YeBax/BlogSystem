@@ -28,11 +28,29 @@ urlpatterns = [
     path("register/", views.register),
     path("logout/", views.logout),
 
+    # 点赞
+    path("digg/", views.digg),
+    # 评论
+    path("comment/", views.comment),
+    # 获取评论树相关数据
+    path("get_comment_tree/", views.get_comment_tree),
+
+    # 文本编辑器上传图片url
+    path('upload/', views.upload),
+
+    # 后台管理url
+    re_path(r"cn_backend/$", views.cn_backend),
+    re_path(r"cn_backend/add_article/$", views.add_article),
+
     # media配置
     re_path(r"media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 
-    # 个人站点
-    re_path(r"^(?P<username>\w+)$", views.home_site),
+    # 个人站点的跳转
     re_path(r"^(?P<username>\w+)/(?P<condition>tag|category|archive)/(?P<param>.*)/$", views.home_site),
+
+    # 个人站点的URL
+    re_path(r"^(?P<username>\w+)$", views.home_site),
+
+    re_path(r"^(?P<username>\w+)/articles/(?P<article_id>\d+)$", views.article_detail),
 
 ]

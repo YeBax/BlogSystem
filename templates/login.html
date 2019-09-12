@@ -61,7 +61,7 @@
             },
             success: function (data) {
                 if (data.user) {
-                    location.href = "/index";
+                    location.href = "/index/";
                 } else {
                     $(".error").text(data.msg).css({"color": "red", "margin-left": "10px"});
                     setTimeout(function () {
